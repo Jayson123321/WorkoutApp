@@ -13,6 +13,7 @@ import androidx.navigation.NavHostController
 import androidx.compose.material3.Scaffold
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.capstoneworkoutapp.ui.components.WorkoutHistoryScreen
 import com.example.capstoneworkoutapp.ui.screens.WorkoutAddScreen
 import com.example.capstoneworkoutapp.ui.screens.WorkoutFavouriteScreen
 import com.example.capstoneworkoutapp.ui.screens.WorkoutScreens
@@ -54,6 +55,9 @@ class MainActivity : ComponentActivity() {
             }
             composable(route = WorkoutScreens.WorkoutAddScreens.name) {
                 WorkoutAddScreen(navController = navController)
+            }
+            composable(route = WorkoutScreens.WorkoutHistoryScreen.name) {
+                WorkoutHistoryScreen(navController = navController)
             }
         }
     }
