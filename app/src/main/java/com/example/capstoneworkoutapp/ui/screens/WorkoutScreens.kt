@@ -4,5 +4,6 @@ enum class WorkoutScreens {
     WorkoutAddScreens,
     WorkoutDetailScreen,
     WorkoutFavouriteScreen,
-    WorkoutHistoryScreen
+    WorkoutHistoryScreen,
+    WorkoutsTodayScreen
 }
