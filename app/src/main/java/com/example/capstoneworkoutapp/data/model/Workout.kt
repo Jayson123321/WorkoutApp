@@ -8,5 +8,6 @@ data class Workout(
     val reps: String = "",
     val weight: String = "",
     val notes: String = "",
-    val duration: String = ""
+    val duration: String = "",
+    val date : String = ""
 )

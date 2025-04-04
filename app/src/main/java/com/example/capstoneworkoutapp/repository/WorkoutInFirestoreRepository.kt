@@ -19,7 +19,8 @@ class WorkoutInFirestoreRepository {
             "reps" to workout.reps,
             "weight" to workout.weight,
             "notes" to workout.notes,
-            "duration" to workout.duration
+            "duration" to workout.duration,
+            "date" to workout.date
         )
         return try {
             withTimeout(5_000) {
@@ -30,4 +31,16 @@ class WorkoutInFirestoreRepository {
             Resource.Error("An unknown error occurred")
         }
     }
+    suspend fun getAllWorkouts(): Resource<List<Workout>> {
+        return try {
+            val snapshot = _workoutDocument.get().await()
+            val workouts = snapshot.documents.mapNotNull { doc ->
+                doc.toObject(Workout::class.java)
+            }
+            Resource.Success(workouts)
+        } catch (e: Exception) {
+            Resource.Error("Failed to load workouts")
+        }
+    }
+
 }
