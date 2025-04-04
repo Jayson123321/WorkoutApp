@@ -4,10 +4,8 @@ data class Workout(
     val category: String = "",
     val bodyPart: String = "",
     val exerciseName: String = "",
-    val sets: String = "",
-    val reps: String = "",
-    val weight: String = "",
+    val setsList: List<ExerciseSet> = emptyList(),
     val notes: String = "",
     val duration: String = "",
-    val date : String = ""
+    val date: String = ""
 )
