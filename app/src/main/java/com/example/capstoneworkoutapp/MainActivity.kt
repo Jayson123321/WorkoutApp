@@ -33,6 +33,7 @@ import com.example.capstoneworkoutapp.ui.screens.WorkoutAddScreen
 import com.example.capstoneworkoutapp.ui.screens.WorkoutDetailScreen
 import com.example.capstoneworkoutapp.ui.screens.WorkoutFavouriteScreen
 import com.example.capstoneworkoutapp.ui.screens.WorkoutScreens
+import com.example.capstoneworkoutapp.ui.screens.WorkoutStepsScreen
 import com.example.capstoneworkoutapp.ui.theme.CapstoneWorkoutappTheme
 import com.example.capstoneworkoutapp.viewModel.WorkoutViewModel
 import com.example.workouttracking.ui.screens.WorkoutsTodayScreen
@@ -94,6 +95,18 @@ class MainActivity : ComponentActivity() {
                     }
                 }
             )
+            NavigationBarItem(
+                icon = {  },
+                label = { Text("Steps") },
+                selected = currentRoute == WorkoutScreens.WorkoutStepsScreen.name,
+                onClick = {
+                    navController.navigate(WorkoutScreens.WorkoutStepsScreen.name) {
+                        popUpTo(navController.graph.startDestinationId) {
+                            saveState = true
+                        }
+                    }
+                }
+            )
         }
     }
 
@@ -120,7 +133,9 @@ class MainActivity : ComponentActivity() {
             composable(route = WorkoutScreens.WorkoutsTodayScreen.name) {
                 WorkoutsTodayScreen(navController = navController)
             }
-
+            composable(route = WorkoutScreens.WorkoutStepsScreen.name) {
+                WorkoutStepsScreen(navController = navController)
+            }
             composable(
                 route = "WorkoutDetailScreen/{workoutJson}",
                 arguments = listOf(navArgument("workoutJson") { type = NavType.StringType })
