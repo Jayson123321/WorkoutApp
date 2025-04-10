@@ -15,8 +15,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
-import com.example.capstoneworkoutapp.viewModel.WorkoutViewModel
+import com.example.capstoneworkoutapp.data.model.Pushup
 import com.example.capstoneworkoutapp.data.model.Workout
+import com.example.capstoneworkoutapp.viewModel.WorkoutViewModel
 import com.google.gson.Gson
 
 @Composable
@@ -25,14 +26,16 @@ fun WorkoutHistoryScreen(
     viewModel: WorkoutViewModel = viewModel()
 ) {
     val workouts by viewModel.workouts.collectAsState()
+    val pushups by viewModel.pushups.collectAsState()
 
-    LaunchedEffect(true) {
+    LaunchedEffect(Unit) {
         viewModel.loadWorkouts()
+        viewModel.loadPushups()
     }
 
     Box(modifier = Modifier.fillMaxSize()) {
-        if (workouts.isEmpty()) {
-            Text("Geen workouts gevonden", modifier = Modifier.align(Alignment.Center))
+        if (workouts.isEmpty() && pushups.isEmpty()) {
+            Text("Geen workouts of push-up sessies gevonden", modifier = Modifier.align(Alignment.Center))
         } else {
             LazyColumn(
                 modifier = Modifier
@@ -47,6 +50,14 @@ fun WorkoutHistoryScreen(
                         viewModel = viewModel
                     )
                 }
+
+                items(pushups) { pushup ->
+                    PushupItem(
+                        pushup = pushup,
+                        navController = navController,
+                        onDelete = { viewModel.deletePushup(pushup.id) }
+                    )
+                }
             }
         }
 
@@ -54,6 +65,44 @@ fun WorkoutHistoryScreen(
             navController = navController,
             modifier = Modifier.align(Alignment.BottomEnd).padding(16.dp)
         )
+    }
+}
+
+@Composable
+fun PushupItem(pushup: Pushup, navController: NavHostController, onDelete: () -> Unit) {
+    val pushupJson = Uri.encode(Gson().toJson(pushup))
+
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable {
+                navController.navigate("PushupDetailScreen/$pushupJson")
+            },
+        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+    ) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Column {
+                    Text("Push-ups: ${pushup.pushupCount}", style = MaterialTheme.typography.titleMedium)
+                    Text("Duur: ${pushup.duration} sec", style = MaterialTheme.typography.bodyMedium)
+                    Text("Categorie: ${pushup.category}", style = MaterialTheme.typography.bodySmall)
+                }
+
+                IconButton(onClick = onDelete) {
+                    Icon(Icons.Default.Delete, contentDescription = "Delete Pushup")
+                }
+            }
+
+            Text(
+                text = "Datum: ${pushup.date}",
+                style = MaterialTheme.typography.bodySmall,
+                modifier = Modifier.padding(top = 8.dp)
+            )
+        }
     }
 }
 
@@ -69,29 +118,30 @@ fun WorkoutItem(workout: Workout, navController: NavHostController, viewModel: W
             },
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
-        Row(
-            modifier = Modifier
-                .padding(16.dp)
-                .fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Column {
-                Text("Exercise: ${workout.exerciseName}", style = MaterialTheme.typography.titleMedium)
-                Text("Category: ${workout.category}", style = MaterialTheme.typography.bodyMedium)
+        Column(modifier = Modifier.padding(16.dp)) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Column {
+                    Text("Exercise: ${workout.exerciseName}", style = MaterialTheme.typography.titleMedium)
+                    Text("Category: ${workout.category}", style = MaterialTheme.typography.bodyMedium)
+                }
+
+                IconButton(onClick = {
+                    viewModel.deleteWorkout(workout.id)
+                }) {
+                    Icon(Icons.Default.Delete, contentDescription = "Delete Workout")
+                }
             }
 
-            IconButton(onClick = {
-                viewModel.deleteWorkout(workout.id)
-            }) {
-                Icon(Icons.Default.Delete, contentDescription = "Delete Workout")
-            }
+            Text(
+                text = "Date: ${workout.date}",
+                style = MaterialTheme.typography.bodySmall,
+                modifier = Modifier.padding(top = 8.dp)
+            )
         }
-        Text(
-            text = "Date: ${workout.date}",
-            style = MaterialTheme.typography.bodySmall,
-            modifier = Modifier.align(Alignment.End).padding(16.dp)
-        )
     }
 }
 
