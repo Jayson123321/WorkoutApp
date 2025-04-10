@@ -2,6 +2,7 @@ package com.example.capstoneworkoutapp.repository
 
 import com.example.capstoneworkoutapp.data.api.util.Resource
 import com.example.capstoneworkoutapp.data.model.Pushup
+import com.example.capstoneworkoutapp.data.model.StepLog
 import com.example.capstoneworkoutapp.data.model.Workout
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.tasks.await
@@ -101,5 +102,23 @@ class WorkoutInFirestoreRepository {
             Resource.Error("Failed to delete push-up")
         }
     }
+    suspend fun saveStepLogToFirestore(stepLog: StepLog): Resource<String> {
+        val data = hashMapOf(
+            "date" to stepLog.date,
+            "stepCount" to stepLog.stepCount
+        )
+
+        return try {
+            withTimeout(5000) {
+                FirebaseFirestore.getInstance()
+                    .collection("stepLogs")
+                    .add(data).await()
+            }
+            Resource.Success("Steps saved successfully")
+        } catch (e: Exception) {
+            Resource.Error("Failed to save steps")
+        }
+    }
+
 
 }

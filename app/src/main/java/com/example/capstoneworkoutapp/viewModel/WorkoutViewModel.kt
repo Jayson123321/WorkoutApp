@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.capstoneworkoutapp.data.api.util.Resource
 import com.example.capstoneworkoutapp.data.model.Pushup
+import com.example.capstoneworkoutapp.data.model.StepLog
 import com.example.capstoneworkoutapp.data.model.Workout
 import com.example.capstoneworkoutapp.repository.WorkoutInFirestoreRepository
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -74,6 +75,13 @@ class WorkoutViewModel : ViewModel() {
             }
         }
     }
+    fun saveStepLog(stepLog: StepLog) {
+        viewModelScope.launch {
+            _saveStatus.value = Resource.Loading()
+            _saveStatus.value = repository.saveStepLogToFirestore(stepLog)
+        }
+    }
+
 
     fun resetSaveStatus() {
         _saveStatus.value = null

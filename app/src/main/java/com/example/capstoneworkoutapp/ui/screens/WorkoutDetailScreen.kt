@@ -3,6 +3,8 @@ package com.example.capstoneworkoutapp.ui.screens
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.*
@@ -34,6 +36,8 @@ fun WorkoutsDetailScreen(
                 .fillMaxSize()
                 .padding(paddingValues)
                 .padding(16.dp)
+                .verticalScroll(rememberScrollState()), // ✅ Scroll support
+            verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -48,20 +52,16 @@ fun WorkoutsDetailScreen(
                 }
             }
 
-            Spacer(modifier = Modifier.height(12.dp))
-
             if (workout.setsList.isNotEmpty()) {
                 Text("Sets:", style = MaterialTheme.typography.titleMedium)
-                Spacer(modifier = Modifier.height(8.dp))
                 workout.setsList.forEachIndexed { index, set ->
                     Text("Set ${index + 1}: ${set.sets} x ${set.reps} @ ${set.weight}kg")
                 }
             }
 
             if (workout.notes.isNotBlank()) {
-                Spacer(modifier = Modifier.height(12.dp))
                 Text("Notes:", style = MaterialTheme.typography.titleMedium)
-                Text(workout.notes ?: "")
+                Text(workout.notes)
             }
         }
     }
