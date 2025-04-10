@@ -33,7 +33,7 @@ fun PushupsScreen(navController: NavHostController, vm: WorkoutViewModel = viewM
     var isTracking by remember { mutableStateOf(false) }
     var duration by remember { mutableIntStateOf(0) }
 
-    // Timer effect
+
     LaunchedEffect(isTracking) {
         if (isTracking) {
             duration = 0
