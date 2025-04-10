@@ -1,9 +1,11 @@
 package com.example.capstoneworkoutapp
 
+import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
@@ -18,29 +20,31 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.example.capstoneworkoutapp.data.model.Pushup
 import com.example.capstoneworkoutapp.data.model.Workout
-import com.example.capstoneworkoutapp.ui.components.WorkoutHistoryScreen
+import com.example.capstoneworkoutapp.ui.screens.PushupDetailScreen
+import com.example.capstoneworkoutapp.ui.screens.PushupsScreen
+import com.example.capstoneworkoutapp.ui.screens.WorkoutHistoryScreen
 import com.example.capstoneworkoutapp.ui.screens.WorkoutAddScreen
-import com.example.capstoneworkoutapp.ui.screens.WorkoutDetailScreen
+import com.example.capstoneworkoutapp.ui.screens.WorkoutsDetailScreen
 import com.example.capstoneworkoutapp.ui.screens.WorkoutFavouriteScreen
 import com.example.capstoneworkoutapp.ui.screens.WorkoutScreens
 import com.example.capstoneworkoutapp.ui.screens.WorkoutStepsScreen
 import com.example.capstoneworkoutapp.ui.theme.CapstoneWorkoutappTheme
-import com.example.capstoneworkoutapp.viewModel.WorkoutViewModel
-import com.example.workouttracking.ui.screens.WorkoutsTodayScreen
+import com.example.capstoneworkoutapp.ui.screens.WorkoutsTodayScreen
 import com.google.gson.Gson
 
 
 class MainActivity : ComponentActivity() {
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -78,7 +82,6 @@ class MainActivity : ComponentActivity() {
                             saveState = true
                         }
                         launchSingleTop = true
-                        restoreState = true
                     }
                 }
             )
@@ -107,10 +110,24 @@ class MainActivity : ComponentActivity() {
                     }
                 }
             )
+            NavigationBarItem(
+                icon = {  },
+                label = { Text("Pushups") },
+                selected = currentRoute == WorkoutScreens.PushupsScreen.name,
+                onClick = {
+                    navController.navigate(WorkoutScreens.PushupsScreen.name) {
+                        popUpTo(navController.graph.startDestinationId) {
+                            saveState = true
+                        }
+                        launchSingleTop = true
+                    }
+                }
+            )
         }
     }
 
 
+    @RequiresApi(Build.VERSION_CODES.O)
     @Composable
     fun NavHost(
         navController: NavHostController,
@@ -136,16 +153,29 @@ class MainActivity : ComponentActivity() {
             composable(route = WorkoutScreens.WorkoutStepsScreen.name) {
                 WorkoutStepsScreen(navController = navController)
             }
+            composable(route = WorkoutScreens.PushupsScreen.name) {
+                PushupsScreen(navController = navController, vm = viewModel())
+            }
+            composable(
+                route = "PushupDetailScreen/{pushupJson}",
+                arguments = listOf(navArgument("pushupJson") { type = NavType.StringType })
+            ) { backStackEntry ->
+                val pushupJson = backStackEntry.arguments?.getString("pushupJson")
+                val pushup = Gson().fromJson(pushupJson, Pushup::class.java)
+                PushupDetailScreen(navController = navController, pushup = pushup)
+            }
+
             composable(
                 route = "WorkoutDetailScreen/{workoutJson}",
                 arguments = listOf(navArgument("workoutJson") { type = NavType.StringType })
             ) { backStackEntry ->
                 val workoutJson = backStackEntry.arguments?.getString("workoutJson")
                 val workout = Gson().fromJson(workoutJson, Workout::class.java)
-                WorkoutDetailScreen(navController = navController, workout = workout)
+                WorkoutsDetailScreen(navController = navController, workout = workout)
             }
         }
     }
+
 
 }
 @Composable

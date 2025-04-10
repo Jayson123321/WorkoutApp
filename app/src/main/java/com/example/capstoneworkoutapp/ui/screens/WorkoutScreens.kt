@@ -6,5 +6,7 @@ enum class WorkoutScreens {
     WorkoutFavouriteScreen,
     WorkoutHistoryScreen,
     WorkoutsTodayScreen,
-    WorkoutStepsScreen
+    WorkoutStepsScreen,
+    PushupsScreen,
+    PushupDetailScreen,
 }
