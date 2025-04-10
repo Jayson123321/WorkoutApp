@@ -8,6 +8,8 @@ import android.hardware.SensorManager
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
@@ -60,9 +62,11 @@ fun PushupsScreen(navController: NavHostController, vm: WorkoutViewModel = viewM
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
-                .padding(32.dp),
-            verticalArrangement = Arrangement.Center
-        ) {
+                .padding(32.dp)
+                .verticalScroll(rememberScrollState()),
+            verticalArrangement = Arrangement.spacedBy(24.dp)
+        )
+        {
             PushupCounterDisplay(pushupCount = pushupCount, duration = duration)
             Spacer(modifier = Modifier.height(32.dp))
             StartStopButtons(
